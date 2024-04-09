@@ -1,7 +1,9 @@
 package com.green.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,12 +16,16 @@ import com.green.VO.BoardVO;
 import com.green.VO.ConditionValue;
 import com.green.entity.Board;
 import com.green.repository.BoardRepository;
+import com.green.repository.SectionRepository;
 
 @Service
 public class BoardServiceImpe implements BoardService {
 
 	@Autowired
 	BoardRepository br;
+	
+	@Autowired
+	SectionRepository sr;
 	
 	@Override
 	public List<BoardVO> getMainVrList() {
@@ -166,7 +172,71 @@ public class BoardServiceImpe implements BoardService {
 		return (int)result.getTotalElements();
 		
 	}
-	
-	
+
+	@Override
+	public void vrWrite(BoardVO boardVO, int sectionNo) {
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		int LocalDateValue = now.getYear();
+		
+		Board board = Board.builder().
+				boardTitle(boardVO.getBoardTitle()).
+				boardContent(boardVO.getBoardContent()).
+				boardFile(boardVO.getBoardFile()).
+				boardWriteYear(LocalDateValue).
+				section(sr.findById(sectionNo).orElse(null)).
+				build();
+		br.save(board);
+	}
+
+	@Override
+	public void videoWrite(BoardVO boardVO, int sectionNo) {
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		int LocalDateValue = now.getYear();
+		
+		Board board = Board.builder().
+				boardTitle(boardVO.getBoardTitle()).
+				boardContent(boardVO.getBoardContent()).
+				boardFile(boardVO.getBoardFile()).
+				section(sr.findById(sectionNo).orElse(null)).
+				build();
+		br.save(board);
+		
+	}
+
+	@Override
+	public Board getVrView(Long boardNo) {
+		
+		Optional<Board> result = br.findById(boardNo);
+		
+		if(result.isPresent()) {
+			
+			Board board = result.get();
+			
+			return board;
+			
+		}
+		
+		return null;
+	}
+
+	@Override
+	public Board getVideoView(Long boardNo) {
+		
+		Optional<Board> result = br.findById(boardNo);
+		
+		if(result.isPresent()) {
+			
+			Board board = result.get();
+			
+			return board;
+			
+		}
+		
+		return null;
+	}
 	
 }

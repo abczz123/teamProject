@@ -40,7 +40,7 @@
 				
 					<tr>
 						<td>${board.boardNo}</td>
-						<td>${board.boardTitle}</td>
+						<td><a href="<c:url value='/vr_view/${board.boardNo}'/>">${board.boardTitle}</a></td>
 						<td>${board.boardContent}</td>
 						<td>${board.boardWriteYear}</td>
 						<td>${board.regDate}</td>
@@ -68,7 +68,7 @@
 				
 					<tr>
 						<td>${board.boardNo}</td>
-						<td>${board.boardTitle}</td>
+						<td><a href="<c:url value='/clip_view/${board.boardNo}'/>">${board.boardTitle}</td>
 						<td>${board.boardContent}</td>
 						<td>${board.regDate}</td>
 						<td>${board.modDate}</td>

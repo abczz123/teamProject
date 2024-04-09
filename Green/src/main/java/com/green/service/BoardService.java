@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.green.VO.BoardVO;
 import com.green.VO.ConditionValue;
+import com.green.entity.Board;
 
 public interface BoardService {
 	
@@ -15,5 +16,11 @@ public interface BoardService {
 	
 	public int getVrCount();
 	public int getVideoCount();
+	
+	public void vrWrite(BoardVO boardVO, int sectionNo);
+	public void videoWrite(BoardVO boardVO, int sectionNo);
+	
+	public Board getVrView(Long boardNo);
+	public Board getVideoView(Long boardNo);
 	
 }
