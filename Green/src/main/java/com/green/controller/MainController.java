@@ -1,5 +1,10 @@
 package com.green.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.green.VO.BoardVO;
 import com.green.VO.ConditionValue;
@@ -79,8 +85,22 @@ public class MainController {
 	}
 	
 	@PostMapping("/vr_write")
-	public String writeVr(BoardVO boardVO, @RequestParam("sectionNo") int sectionNo) {
-		service.vrWrite(boardVO, sectionNo);
+	public String writeVr(BoardVO boardVO, @RequestParam("sectionNo") int sectionNo, @RequestParam("file") MultipartFile file) {
+		
+		String uploadDir = "src/main/resources/static/images";
+		
+		try {
+			
+			Path filePath = Paths.get(uploadDir, file.getOriginalFilename());
+			Files.write(filePath, file.getBytes());
+			
+			long boardNo = service.vrWrite(boardVO, sectionNo);
+			service.imageUpload(boardNo, file);
+			
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
 		return "redirect:/vr";
 	}
 	
@@ -90,8 +110,22 @@ public class MainController {
 	}
 	
 	@PostMapping("/clip_write")
-	public String writeVideo(BoardVO boardVO, @RequestParam("sectionNo") int sectionNo) {
-		service.videoWrite(boardVO, sectionNo);
+	public String writeVideo(BoardVO boardVO, @RequestParam("sectionNo") int sectionNo, @RequestParam("file") MultipartFile file) {
+		
+		String uploadDir = "src/main/resources/static/images";
+		
+		try {
+			
+			Path filePath = Paths.get(uploadDir, file.getOriginalFilename());
+			Files.write(filePath, file.getBytes());
+			
+			long boardNo = service.videoWrite(boardVO, sectionNo);
+			service.videoUpload(boardNo, file);
+			
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
 		return "redirect:clip";
 	}
 	
@@ -99,6 +133,7 @@ public class MainController {
 	public String vrView(@PathVariable("boardNo") long boardNo, Model model) {
 		
 		model.addAttribute("board", service.getVrView(boardNo));
+		model.addAttribute("image", service.getVrViewImage(boardNo));
 		
 		return "/section/vr/vr_view";
 	}
@@ -110,14 +145,5 @@ public class MainController {
 		
 		return "/section/clip/clip_view";
 	}
-	
-//	@PostMapping("/upload")
-//	public String upload(@RequestParam("file") MultipartFile file) {
-//		String fileRealName = file.getOriginalFileName();
-//		long size = file.getSize();
-//		
-//		
-//	}
-	
-	
+		
 }

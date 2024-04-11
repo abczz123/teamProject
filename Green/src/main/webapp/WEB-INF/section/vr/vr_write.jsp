@@ -11,12 +11,12 @@
 	
 	<div>
 		<h3>vr 아카이빙 작성</h3>
-		<form action="vr_write" method="post">
+		<form action="vr_write" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="sectionNo" value="2">
 			<table class="getTable" border="1">
 				<tr>
 					<th>파일</th>
-					<td><input type="file" name="boardFile"></td>
+					<td><input type="file" name="file"></td>
 				</tr>
 				<tr>
 					<th>글 제목</th>

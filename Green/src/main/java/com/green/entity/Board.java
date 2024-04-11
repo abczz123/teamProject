@@ -1,7 +1,10 @@
 package com.green.entity;
 
-import java.time.LocalDate;
+import java.awt.Image;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +32,7 @@ public class Board extends BaseEntity {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long boardNo;
 	
-	@Column(length=50, nullable=false)
+	@Column
 	private int boardWriteYear;
 	
 	@Column(length=100, nullable=false)
@@ -37,14 +41,14 @@ public class Board extends BaseEntity {
 	@Column(length=1000, nullable=false)
 	private String boardContent;
 	
-	@Column(length=255, nullable=false)
-	private String boardFile;
-	
 	@Column(nullable=false)
 	private int viewCount;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="section_no")
 	private Section section;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<File> files = new ArrayList<>();
 	
 }

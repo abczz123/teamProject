@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.green.entity.Board;
+import com.green.entity.File;
 import com.green.entity.Section;
 
 @SpringBootTest
@@ -19,6 +20,9 @@ public class BoardRepositoryTest {
 	
 	@Autowired
 	SectionRepository sr;
+	
+	@Autowired
+	FileRepository fr;
 	
 	@Test
 	public void insertSection() {
@@ -71,7 +75,6 @@ public class BoardRepositoryTest {
 							boardWriteYear(now.getYear()).
 							boardTitle("vr, 글 제목 "+i).
 							boardContent("글 내용 "+i).
-							boardFile("파일 "+i).
 							viewCount(0).
 							section(sr.findById(randomValue).orElse(null)).
 							build();
@@ -81,7 +84,6 @@ public class BoardRepositoryTest {
 							boardWriteYear(now.getYear()).
 							boardTitle("동영상, 글 제목 "+i).
 							boardContent("글 내용 "+i).
-							boardFile("파일 "+i).
 							viewCount(0).
 							section(sr.findById(randomValue).orElse(null)).
 							build();
@@ -91,7 +93,6 @@ public class BoardRepositoryTest {
 							boardWriteYear(now.getYear()).
 							boardTitle("디지털 조감도, 글 제목 "+i).
 							boardContent("글 내용 "+i).
-							boardFile("파일 "+i).
 							viewCount(0).
 							section(sr.findById(randomValue).orElse(null)).
 							build();

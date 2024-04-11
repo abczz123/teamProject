@@ -1,10 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+ <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style>
+.Img{
+	width:350px;
+	height:350px;
+}
+</style>
 </head>
 <body>
 	<div>
@@ -15,7 +22,9 @@
 			</tr>
 			<tr>
 				<td>파일</td>
-				<td>${board.boardFile}</td>
+				<c:forEach items="${image}" var="img">
+				<td><img class = "Img" src="${img.fileName}" alt="이미지"></td>
+				</c:forEach>
 			</tr>
 			<tr>
 				<td>게시글 제목</td>

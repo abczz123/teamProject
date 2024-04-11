@@ -2,9 +2,12 @@ package com.green.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.green.VO.BoardVO;
 import com.green.VO.ConditionValue;
 import com.green.entity.Board;
+import com.green.entity.File;
 
 public interface BoardService {
 	
@@ -17,10 +20,15 @@ public interface BoardService {
 	public int getVrCount();
 	public int getVideoCount();
 	
-	public void vrWrite(BoardVO boardVO, int sectionNo);
-	public void videoWrite(BoardVO boardVO, int sectionNo);
+	public long vrWrite(BoardVO boardVO, int sectionNo);
+	public long videoWrite(BoardVO boardVO, int sectionNo);
 	
 	public Board getVrView(Long boardNo);
+	public List<File> getVrViewImage(Long boardNo);
+	
 	public Board getVideoView(Long boardNo);
+	
+	public void imageUpload(long boardNo, MultipartFile file);
+	public void videoUpload(long boardNo, MultipartFile file);
 	
 }

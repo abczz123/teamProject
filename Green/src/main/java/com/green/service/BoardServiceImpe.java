@@ -1,7 +1,9 @@
 package com.green.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,11 +13,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.green.VO.BoardVO;
 import com.green.VO.ConditionValue;
 import com.green.entity.Board;
+import com.green.entity.File;
 import com.green.repository.BoardRepository;
+import com.green.repository.FileRepository;
 import com.green.repository.SectionRepository;
 
 @Service
@@ -26,6 +31,9 @@ public class BoardServiceImpe implements BoardService {
 	
 	@Autowired
 	SectionRepository sr;
+	
+	@Autowired
+	FileRepository fr;
 	
 	@Override
 	public List<BoardVO> getMainVrList() {
@@ -50,7 +58,6 @@ public class BoardServiceImpe implements BoardService {
 			boardVO.setBoardWriteYear(board.getBoardWriteYear());
 			boardVO.setRegDate(board.getRegDate());
 			boardVO.setModDate(board.getModDate());
-			boardVO.setBoardFile(board.getBoardFile());
 			
 			list.add(boardVO);
 			
@@ -78,7 +85,6 @@ public class BoardServiceImpe implements BoardService {
 			boardVO.setBoardNo(board.getBoardNo());
 			boardVO.setBoardTitle(board.getBoardTitle());
 			boardVO.setBoardContent(board.getBoardContent());
-			boardVO.setBoardFile(board.getBoardFile());
 			boardVO.setRegDate(board.getRegDate());
 			boardVO.setModDate(board.getModDate());
 
@@ -111,8 +117,10 @@ public class BoardServiceImpe implements BoardService {
 			boardVO.setBoardWriteYear(board.getBoardWriteYear());
 			boardVO.setRegDate(board.getRegDate());
 			boardVO.setModDate(board.getModDate());
-			boardVO.setBoardFile(board.getBoardFile());
 
+			List<File> imageFiles = fr.findByBoard(board);
+			boardVO.setImageFiles(imageFiles);
+			
 			list.add(boardVO);
 			
 		}
@@ -139,7 +147,6 @@ public class BoardServiceImpe implements BoardService {
 			boardVO.setBoardNo(board.getBoardNo());
 			boardVO.setBoardTitle(board.getBoardTitle());
 			boardVO.setBoardContent(board.getBoardContent());
-			boardVO.setBoardFile(board.getBoardFile());
 			boardVO.setRegDate(board.getRegDate());
 			boardVO.setModDate(board.getModDate());
 			
@@ -174,7 +181,7 @@ public class BoardServiceImpe implements BoardService {
 	}
 
 	@Override
-	public void vrWrite(BoardVO boardVO, int sectionNo) {
+	public long vrWrite(BoardVO boardVO, int sectionNo) {
 		
 		LocalDateTime now = LocalDateTime.now();
 		
@@ -183,15 +190,17 @@ public class BoardServiceImpe implements BoardService {
 		Board board = Board.builder().
 				boardTitle(boardVO.getBoardTitle()).
 				boardContent(boardVO.getBoardContent()).
-				boardFile(boardVO.getBoardFile()).
 				boardWriteYear(LocalDateValue).
 				section(sr.findById(sectionNo).orElse(null)).
 				build();
-		br.save(board);
+		board = br.save(board);
+		
+		return board.getBoardNo();
+		
 	}
 
 	@Override
-	public void videoWrite(BoardVO boardVO, int sectionNo) {
+	public long videoWrite(BoardVO boardVO, int sectionNo) {
 		
 		LocalDateTime now = LocalDateTime.now();
 		
@@ -200,10 +209,12 @@ public class BoardServiceImpe implements BoardService {
 		Board board = Board.builder().
 				boardTitle(boardVO.getBoardTitle()).
 				boardContent(boardVO.getBoardContent()).
-				boardFile(boardVO.getBoardFile()).
 				section(sr.findById(sectionNo).orElse(null)).
 				build();
-		br.save(board);
+		
+		board = br.save(board);
+		
+		return board.getBoardNo();
 		
 	}
 
@@ -237,6 +248,62 @@ public class BoardServiceImpe implements BoardService {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public void imageUpload(long boardNo, MultipartFile file) {
+		
+		try {
+			
+			String fileName = "/images/";
+			
+			byte[] fileBytes = file.getBytes();
+			
+			File fileEntity = File.builder().
+					fileName(fileName+file.getOriginalFilename()).
+					board(br.findById(boardNo).orElse(null)).
+					build();
+			fr.save(fileEntity);
+			
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+	                
+	}
+
+	@Override
+	public void videoUpload(long boardNo, MultipartFile file) {
+		
+		try {
+			
+			byte[] fileBytes = file.getBytes();
+			
+			File fileEntity = File.builder().
+					fileName(file.getOriginalFilename()).
+					board(br.findById(boardNo).orElse(null)).
+					build();
+			fr.save(fileEntity);
+			
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public List<File> getVrViewImage(Long boardNo) {
+		
+		Optional<Board> result = br.findById(boardNo);
+		
+		if(result.isPresent()) {
+			
+			Board board = result.get();
+			
+			return board.getFiles();
+			
+		}
+		
+		return Collections.emptyList();
 	}
 	
 }

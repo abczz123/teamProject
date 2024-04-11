@@ -6,6 +6,12 @@
 <meta charset="UTF-8">
 <title>VR 아카이빙</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<style>
+.img{
+	width:150px;
+	height:150px;
+}
+</style>
 </head>
 <body>
 	<h3>VR 아카이빙</h3>
@@ -29,7 +35,9 @@
 				<td>${board.boardWriteYear}</td>
 				<td>${board.regDate}</td>
 				<td>${board.modDate}</td>
-				<td>${board.boardFile}</td>
+				<c:forEach items="${board.imageFiles}" var="image">
+				<td><img class="img" src="${image.fileName}" alt="이미지"></td>
+				</c:forEach>
 			</tr>
 		</c:forEach>
 	</table>
