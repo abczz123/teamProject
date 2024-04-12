@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,7 +29,12 @@
 					<td>${board.boardContent}</td>
 					<td>${board.regDate}</td>
 					<td>${board.modDate}</td>
-					<td>${board.boardFile}</td>
+					<c:forEach items="${board.videoFiles}" var="video">
+					<c:set var="youtubeUrl" value="${video.fileName}"/>
+					<td>
+				        <iframe width="150" height="150" src="https://www.youtube.com/embed/${fn:substringAfter(youtubeUrl, 'v=')}" title="YouTube 동영상" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+				    </td>
+					</c:forEach>	
 				</tr>
 			</c:forEach>
 		</table>
@@ -38,12 +44,18 @@
 			<input type="hidden" name="amount" value="${page.cv.amount}">
 		</form>
 	<div>
+		<c:if test="${not page.prev}">
+			<a href=""> [prev] </a>
+		</c:if>
 		<c:if test="${page.prev}">
 			<a class="pageBtn" href="${page.startPage-1}"> [prev] </a>
 		</c:if>
 		<c:forEach var="num" begin="${page.startPage}" end="${page.endPage}" step="1">
 			<a class="pageBtn" href="${num}">${num}</a>
 		</c:forEach>
+		<c:if test="${not page.next}">
+			<a href=""> [next] </a>
+		</c:if>
 		<c:if test="${page.next}">
 			<a class="pageBtn" href="${page.endPage+1}"> [next] </a>
 		</c:if>

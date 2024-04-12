@@ -59,6 +59,9 @@ public class BoardServiceImpe implements BoardService {
 			boardVO.setRegDate(board.getRegDate());
 			boardVO.setModDate(board.getModDate());
 			
+			List<File> imageFiles = fr.findByBoard(board);
+			boardVO.setImageFiles(imageFiles);
+			
 			list.add(boardVO);
 			
 		}
@@ -88,6 +91,42 @@ public class BoardServiceImpe implements BoardService {
 			boardVO.setRegDate(board.getRegDate());
 			boardVO.setModDate(board.getModDate());
 
+			List<File> videoFiles = fr.findByBoard(board);
+			boardVO.setVideoFiles(videoFiles);
+			
+			list.add(boardVO);
+			
+		}
+		
+		return list;
+		
+	}
+	
+	@Override
+	public List<BoardVO> getVrList(ConditionValue cv) {
+		
+		Sort sort = Sort.by("boardNo").descending();
+		
+		Pageable pageable = PageRequest.of(cv.getPageNum()-1, 9, sort);
+		
+		Page<Board> result = br.getBoardPage(2, pageable);
+		
+		List<BoardVO> list = new ArrayList<>();
+		
+		for(Board board : result.getContent()) {
+			
+			BoardVO boardVO = new BoardVO();
+			
+			boardVO.setBoardNo(board.getBoardNo());
+			boardVO.setBoardTitle(board.getBoardTitle());
+			boardVO.setBoardContent(board.getBoardContent());
+			boardVO.setBoardWriteYear(board.getBoardWriteYear());
+			boardVO.setRegDate(board.getRegDate());
+			boardVO.setModDate(board.getModDate());
+
+			List<File> imageFiles = fr.findByBoard(board);
+			boardVO.setImageFiles(imageFiles);
+			
 			list.add(boardVO);
 			
 		}
@@ -97,13 +136,79 @@ public class BoardServiceImpe implements BoardService {
 	}
 
 	@Override
-	public List<BoardVO> getVrList(ConditionValue cv) {
+	public List<BoardVO> getVrListOne(ConditionValue cv) {
 		
 		Sort sort = Sort.by("boardNo").descending();
 		
 		Pageable pageable = PageRequest.of(cv.getPageNum()-1, 9, sort);
 		
-		Page<Board> result = br.getBoardPage(2, pageable);
+		Page<Board> result = br.getBoardPageAnotherDate(2, 2024, pageable);
+		
+		List<BoardVO> list = new ArrayList<>();
+		
+		for(Board board : result.getContent()) {
+			
+			BoardVO boardVO = new BoardVO();
+			
+			boardVO.setBoardNo(board.getBoardNo());
+			boardVO.setBoardTitle(board.getBoardTitle());
+			boardVO.setBoardContent(board.getBoardContent());
+			boardVO.setBoardWriteYear(board.getBoardWriteYear());
+			boardVO.setRegDate(board.getRegDate());
+			boardVO.setModDate(board.getModDate());
+
+			List<File> imageFiles = fr.findByBoard(board);
+			boardVO.setImageFiles(imageFiles);
+			
+			list.add(boardVO);
+			
+		}
+		
+		return list;
+		
+	}
+	
+	@Override
+	public List<BoardVO> getVrListTwo(ConditionValue cv) {
+		
+		Sort sort = Sort.by("boardNo").descending();
+		
+		Pageable pageable = PageRequest.of(cv.getPageNum()-1, 9, sort);
+		
+		Page<Board> result = br.getBoardPageAnotherDate(2, 2025, pageable);
+		
+		List<BoardVO> list = new ArrayList<>();
+		
+		for(Board board : result.getContent()) {
+			
+			BoardVO boardVO = new BoardVO();
+			
+			boardVO.setBoardNo(board.getBoardNo());
+			boardVO.setBoardTitle(board.getBoardTitle());
+			boardVO.setBoardContent(board.getBoardContent());
+			boardVO.setBoardWriteYear(board.getBoardWriteYear());
+			boardVO.setRegDate(board.getRegDate());
+			boardVO.setModDate(board.getModDate());
+
+			List<File> imageFiles = fr.findByBoard(board);
+			boardVO.setImageFiles(imageFiles);
+			
+			list.add(boardVO);
+			
+		}
+		
+		return list;
+		
+	}
+	
+	@Override
+	public List<BoardVO> getVrListThree(ConditionValue cv) {
+		
+		Sort sort = Sort.by("boardNo").descending();
+		
+		Pageable pageable = PageRequest.of(cv.getPageNum()-1, 9, sort);
+		
+		Page<Board> result = br.getBoardPageAnotherDate(2, 2026, pageable);
 		
 		List<BoardVO> list = new ArrayList<>();
 		
@@ -150,6 +255,9 @@ public class BoardServiceImpe implements BoardService {
 			boardVO.setRegDate(board.getRegDate());
 			boardVO.setModDate(board.getModDate());
 			
+			List<File> videoFiles = fr.findByBoard(board);
+			boardVO.setVideoFiles(videoFiles);
+			
 			list.add(boardVO);
 			
 		}
@@ -164,6 +272,39 @@ public class BoardServiceImpe implements BoardService {
 		Pageable pageable = PageRequest.of(0, 9);
 		
 		Page<Board> result = br.getBoardPage(2, pageable);
+		
+		return (int)result.getTotalElements();
+		
+	}
+	
+	@Override
+	public int getVrCountOne() {
+		
+		Pageable pageable = PageRequest.of(0, 9);
+		
+		Page<Board> result = br.getBoardPageAnotherDate(2, 2024, pageable);
+		
+		return (int)result.getTotalElements();
+		
+	}
+	
+	@Override
+	public int getVrCountTwo() {
+		
+		Pageable pageable = PageRequest.of(0, 9);
+		
+		Page<Board> result = br.getBoardPageAnotherDate(2, 2025, pageable);
+		
+		return (int)result.getTotalElements();
+		
+	}
+	
+	@Override
+	public int getVrCountThree() {
+		
+		Pageable pageable = PageRequest.of(0, 9);
+		
+		Page<Board> result = br.getBoardPageAnotherDate(2, 2026, pageable);
 		
 		return (int)result.getTotalElements();
 		
@@ -235,7 +376,7 @@ public class BoardServiceImpe implements BoardService {
 	}
 
 	@Override
-	public Board getVideoView(Long boardNo) {
+	public Board getClipView(Long boardNo) {
 		
 		Optional<Board> result = br.findById(boardNo);
 		
@@ -272,22 +413,14 @@ public class BoardServiceImpe implements BoardService {
 	}
 
 	@Override
-	public void videoUpload(long boardNo, MultipartFile file) {
+	public void videoUpload(long boardNo, String youtubeLink) {
 		
-		try {
-			
-			byte[] fileBytes = file.getBytes();
-			
 			File fileEntity = File.builder().
-					fileName(file.getOriginalFilename()).
+					fileName(youtubeLink).
 					board(br.findById(boardNo).orElse(null)).
 					build();
 			fr.save(fileEntity);
 			
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-		
 	}
 
 	@Override
@@ -303,7 +436,26 @@ public class BoardServiceImpe implements BoardService {
 			
 		}
 		
-		return Collections.emptyList();
+		return null;
 	}
+
+	@Override
+	public List<File> getClipViewVideo(Long boardNo) {
+		
+		Optional<Board> result = br.findById(boardNo);
+		
+		if(result.isPresent()) {
+			
+			Board board = result.get();
+			
+			return board.getFiles();
+			
+		}
+		
+		return null;
+		
+	}
+	
+	
 	
 }

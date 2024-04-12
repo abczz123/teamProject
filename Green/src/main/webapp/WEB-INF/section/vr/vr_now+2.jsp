@@ -18,7 +18,7 @@
 	<button type="button" onclick="location.href='/vr'">전체 조회</button>
 	<button type="button" onclick="location.href='/vr_now'">2024</button>
 	<button type="button" onclick="location.href='/vr_now+1'">2025</button>
-	<button type="button" onclick="location.href='/vr_now+2'">2026</button>	
+	<button type="button" onclick="location.href='/vr_now+2'">2026</button>
 	<hr>
 	<div>
 	<table border=1>

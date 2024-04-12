@@ -13,4 +13,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
 	@Query("select b from Board b left join b.section s where s.sectionNo =:sectionNo")
 	Page<Board> getBoardPage(@Param("sectionNo") int sectionNo, Pageable pageable);
 	
+	@Query("select b from Board b left join b.section s where s.sectionNo =:sectionNo and b.boardWriteYear =:boardWriteYear")
+	Page<Board> getBoardPageAnotherDate(@Param("sectionNo") int sectionNo, @Param("boardWriteYear") int boardWriteYear, Pageable pagealbe);
+	
 }

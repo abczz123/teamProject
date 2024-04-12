@@ -63,6 +63,39 @@ public class MainController {
 		return "/section/vr/vr";
 	}
 	
+	@GetMapping("/vr_now")
+	public String goToVrOne(Model model, ConditionValue cv) {
+		
+		long total = service.getVrCountOne();
+		
+		model.addAttribute("list", service.getVrListOne(cv));
+		model.addAttribute("page", new PageVO(cv, total));
+		
+		return "/section/vr/vr_now";
+	}
+	
+	@GetMapping("/vr_now+1")
+	public String goToVrTwo(Model model, ConditionValue cv) {
+		
+		long total = service.getVrCountTwo();
+		
+		model.addAttribute("list", service.getVrListTwo(cv));
+		model.addAttribute("page", new PageVO(cv, total));
+		
+		return "/section/vr/vr_now+1";
+	}
+	
+	@GetMapping("/vr_now+2")
+	public String goToVrThree(Model model, ConditionValue cv) {
+		
+		long total = service.getVrCountThree();
+		
+		model.addAttribute("list", service.getVrListThree(cv));
+		model.addAttribute("page", new PageVO(cv, total));
+		
+		return "/section/vr/vr_now+2";
+	}
+	
 	@GetMapping("/clip")
 	public String goToClip(Model model, ConditionValue cv) {
 		
@@ -110,22 +143,11 @@ public class MainController {
 	}
 	
 	@PostMapping("/clip_write")
-	public String writeVideo(BoardVO boardVO, @RequestParam("sectionNo") int sectionNo, @RequestParam("file") MultipartFile file) {
+	public String writeVideo(BoardVO boardVO, @RequestParam("sectionNo") int sectionNo, @RequestParam("youtubeLink") String youtubeLink) {
 		
-		String uploadDir = "src/main/resources/static/images";
-		
-		try {
-			
-			Path filePath = Paths.get(uploadDir, file.getOriginalFilename());
-			Files.write(filePath, file.getBytes());
-			
 			long boardNo = service.videoWrite(boardVO, sectionNo);
-			service.videoUpload(boardNo, file);
+			service.videoUpload(boardNo, youtubeLink);
 			
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-		
 		return "redirect:clip";
 	}
 	
@@ -141,7 +163,8 @@ public class MainController {
 	@GetMapping("/clip_view/{boardNo}")
 	public String videoView(@PathVariable("boardNo") long boardNo, Model model) {
 		
-		model.addAttribute("board", service.getVideoView(boardNo));
+		model.addAttribute("board", service.getClipView(boardNo));
+		model.addAttribute("video", service.getClipViewVideo(boardNo));
 		
 		return "/section/clip/clip_view";
 	}

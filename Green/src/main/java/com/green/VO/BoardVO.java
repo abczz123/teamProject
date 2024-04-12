@@ -24,5 +24,6 @@ public class BoardVO {
 		private LocalDateTime modDate;
 		private String sectionNo;
 		private List<File> imageFiles;
+		private List<File> videoFiles;
 		
 }

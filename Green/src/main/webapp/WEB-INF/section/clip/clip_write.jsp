@@ -16,7 +16,7 @@
 			<table class="getTable" border="1">
 				<tr>
 					<th>파일</th>
-					<td><input type="file" name="boardFile"></td>
+					<td><input type="text" name="youtubeLink"></td>
 				</tr>
 				<tr>
 					<th>글 제목</th>

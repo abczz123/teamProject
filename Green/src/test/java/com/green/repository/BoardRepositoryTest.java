@@ -69,10 +69,12 @@ public class BoardRepositoryTest {
 			for(int i=1; i<=500; i++) {
 				
 				int randomValue = random.nextInt(3)+2;
+				int randomWriterDate = random.nextInt(3)+2024;
 				
 				if(randomValue == 2) {
 					Board board = Board.builder().
-							boardWriteYear(now.getYear()).
+//							boardWriteYear(now.getYear()).
+							boardWriteYear(randomWriterDate).
 							boardTitle("vr, 글 제목 "+i).
 							boardContent("글 내용 "+i).
 							viewCount(0).
@@ -81,7 +83,8 @@ public class BoardRepositoryTest {
 					br.save(board);
 				}else if(randomValue == 3) {
 					Board board = Board.builder().
-							boardWriteYear(now.getYear()).
+//							boardWriteYear(now.getYear()).
+							boardWriteYear(randomWriterDate).
 							boardTitle("동영상, 글 제목 "+i).
 							boardContent("글 내용 "+i).
 							viewCount(0).
@@ -90,7 +93,8 @@ public class BoardRepositoryTest {
 					br.save(board);
 				}else if(randomValue == 4) {
 					Board board = Board.builder().
-							boardWriteYear(now.getYear()).
+//							boardWriteYear(now.getYear()).
+							boardWriteYear(randomWriterDate).
 							boardTitle("디지털 조감도, 글 제목 "+i).
 							boardContent("글 내용 "+i).
 							viewCount(0).
