@@ -3,9 +3,9 @@ package com.green.service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -392,19 +392,26 @@ public class BoardServiceImpe implements BoardService {
 	}
 
 	@Override
-	public void imageUpload(long boardNo, MultipartFile file) {
+	public void imageUpload(long boardNo, List<MultipartFile> files) {
 		
 		try {
 			
 			String fileName = "/images/";
 			
-			byte[] fileBytes = file.getBytes();
+			int i = 1;
 			
-			File fileEntity = File.builder().
-					fileName(fileName+file.getOriginalFilename()).
-					board(br.findById(boardNo).orElse(null)).
-					build();
-			fr.save(fileEntity);
+			for(MultipartFile file : files) {
+			
+				byte[] fileBytes = file.getBytes();
+				
+				File fileEntity = File.builder().
+						id2(i++).
+						fileName(fileName+file.getOriginalFilename()).
+						board(br.findById(boardNo).orElse(null)).
+						build();
+				fr.save(fileEntity);
+				
+			}
 			
 		}catch(IOException e) {
 			e.printStackTrace();
@@ -453,6 +460,137 @@ public class BoardServiceImpe implements BoardService {
 		}
 		
 		return null;
+		
+	}
+
+	@Override
+	public Board get(long boardNo) {
+		
+		Optional<Board> result = br.findById(boardNo);
+		
+		if(result.isPresent()) {
+			Board board = result.get();
+			
+			return board;
+		}
+		
+		return null;
+		
+	}
+
+	@Override
+	public void vrModify(BoardVO boardVO, int sectionNo) {
+		
+		System.out.println("게시글 번호 : "+boardVO.getBoardNo());
+		System.out.println("게시글 제목 : "+boardVO.getBoardTitle());
+		System.out.println("게시글 내용 : "+boardVO.getBoardContent());
+		
+		Board board = Board.builder().
+					boardNo(boardVO.getBoardNo()).
+					boardTitle(boardVO.getBoardTitle()).
+					boardContent(boardVO.getBoardContent()).
+					boardWriteYear(boardVO.getBoardWriteYear()).
+					section(sr.findById(sectionNo).orElse(null)).
+					build();
+					
+		br.save(board);
+	}
+
+	@Override
+	public void imageModify(BoardVO boardVO, long fileNo, List<MultipartFile> files) {
+		
+		try {
+			
+			String fileName = "/images/";
+			
+			int i = 1;
+			
+			for(MultipartFile file : files) {
+				
+				byte[] fileBytes = file.getBytes();
+				
+				File fileEntity = File.builder().
+						id(fileNo++).
+						id2(i++).
+						fileName(fileName+file.getOriginalFilename()).
+						board(br.findById(boardVO.getBoardNo()).orElse(null)).
+						build();
+				fr.save(fileEntity);
+				
+			}
+			
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public long getFileNo(BoardVO boardVO) {
+		
+		Optional<File> result = fr.findByBoard_BoardNoAndId2(boardVO.getBoardNo(), 1);
+		
+		if(result.isPresent()) {
+			
+			File file = result.get();
+			
+			return file.getId();
+			
+		}
+		
+		return 0;
+		
+	}
+	
+	@Override
+	public long getFileNo2(BoardVO boardVO) {
+		
+		Optional<File> result = fr.findByBoard_BoardNo(boardVO.getBoardNo());
+		
+		if(result.isPresent()) {
+			
+			File file = result.get();
+			
+			return file.getId();
+			
+		}
+		
+		return 0;
+		
+	}
+
+	@Override
+	public void vrRemove(long boardNo) {
+		
+		br.deleteById(boardNo);
+		
+	}
+
+	@Override
+	public void clipModify(BoardVO boardVO, String youtubeLink, int sectionNo, long fileNo) {
+		
+		Board board = Board.builder().
+				boardNo(boardVO.getBoardNo()).
+				boardTitle(boardVO.getBoardTitle()).
+				boardContent(boardVO.getBoardContent()).
+				boardWriteYear(boardVO.getBoardWriteYear()).
+				section(sr.findById(sectionNo).orElse(null)).
+				build();
+		br.save(board);
+		
+		File file = File.builder().
+				id(fileNo).
+				fileName(youtubeLink).
+				board(br.findById(boardVO.getBoardNo()).orElse(null)).
+				build();
+		fr.save(file);
+
+	}
+	
+	@Override
+	public void clipRemove(long boardNo) {
+		
+		br.deleteById(boardNo);
 		
 	}
 	

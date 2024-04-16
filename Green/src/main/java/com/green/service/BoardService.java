@@ -37,7 +37,20 @@ public interface BoardService {
 	public Board getClipView(Long boardNo);
 	public List<File> getClipViewVideo(Long boardNo);
 	
-	public void imageUpload(long boardNo, MultipartFile file);
+	public void imageUpload(long boardNo, List<MultipartFile> files);
 	public void videoUpload(long boardNo, String YoutubeLink);
+	
+	public Board get(long boardNo);
+	
+	public void vrModify(BoardVO boardVO, int sectionNo);
+	public void clipModify(BoardVO boardVO, String youtubeLink, int sectionNo, long fileNo);
+	
+	public void imageModify(BoardVO boardVO, long fileNo, List<MultipartFile> files);
+	
+	public long getFileNo(BoardVO boardVO);
+	public long getFileNo2(BoardVO boardVO);
+	
+	public void vrRemove(long boardNo);
+	public void clipRemove(long boardNo);
 	
 }

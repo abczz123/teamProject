@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,7 @@ import com.green.VO.ConditionValue;
 import com.green.VO.PageVO;
 import com.green.service.BoardService;
 
+@CrossOrigin
 @Controller
 @RequestMapping(value={"/", "/main"})
 public class MainController {
@@ -118,17 +121,22 @@ public class MainController {
 	}
 	
 	@PostMapping("/vr_write")
-	public String writeVr(BoardVO boardVO, @RequestParam("sectionNo") int sectionNo, @RequestParam("file") MultipartFile file) {
+	public String writeVr(BoardVO boardVO, @RequestParam("sectionNo") int sectionNo, @RequestParam("files") List<MultipartFile> files) {
 		
 		String uploadDir = "src/main/resources/static/images";
 		
+		long boardNo = service.vrWrite(boardVO, sectionNo);
+		
 		try {
 			
-			Path filePath = Paths.get(uploadDir, file.getOriginalFilename());
-			Files.write(filePath, file.getBytes());
+			for(MultipartFile file : files) {
+				
+				Path filePath = Paths.get(uploadDir, file.getOriginalFilename());
+				Files.write(filePath, file.getBytes());
 			
-			long boardNo = service.vrWrite(boardVO, sectionNo);
-			service.imageUpload(boardNo, file);
+			}
+			
+			service.imageUpload(boardNo, files);
 			
 		}catch(IOException e) {
 			e.printStackTrace();
@@ -148,7 +156,7 @@ public class MainController {
 			long boardNo = service.videoWrite(boardVO, sectionNo);
 			service.videoUpload(boardNo, youtubeLink);
 			
-		return "redirect:clip";
+		return "redirect:/clip";
 	}
 	
 	@GetMapping("/vr_view/{boardNo}")
@@ -161,12 +169,84 @@ public class MainController {
 	}
 	
 	@GetMapping("/clip_view/{boardNo}")
-	public String videoView(@PathVariable("boardNo") long boardNo, Model model) {
+	public String videoView(@PathVariable("boardNo") Long boardNo, Model model) {
 		
 		model.addAttribute("board", service.getClipView(boardNo));
 		model.addAttribute("video", service.getClipViewVideo(boardNo));
 		
 		return "/section/clip/clip_view";
 	}
+	
+	@GetMapping("/vr_modify")
+	public String vrModifyForm(Model model, @RequestParam("boardNo") long boardNo) {
+	
+		model.addAttribute("board", service.get(boardNo));
+		model.addAttribute("image", service.getVrViewImage(boardNo));
 		
+		return "/section/vr/vr_modify";
+	}
+	
+	@PostMapping("/vr_modify")
+	public String vrModify(BoardVO boardVO, @RequestParam("files") List<MultipartFile> files, @RequestParam("sectionNo") int sectionNo) {
+		
+		service.vrModify(boardVO, sectionNo);
+		
+		long fileNo = service.getFileNo(boardVO);
+		
+		String uploadDir = "src/main/resources/static/images";
+		
+		try {
+			
+			for(MultipartFile file : files) {
+				
+				Path filePath = Paths.get(uploadDir, file.getOriginalFilename());
+				Files.write(filePath, file.getBytes());
+				
+			}
+
+			service.imageModify(boardVO, fileNo, files);
+			
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+			
+		return "redirect:/vr";
+	}
+	
+	@GetMapping("vr_remove")
+	public String vrRemove(@RequestParam("boardNo") long boardNo) {
+		
+		service.vrRemove(boardNo);
+		
+		return "redirect:/vr";
+	}
+	
+	@GetMapping("/clip_modify")
+	public String clipModifyForm(Model model, @RequestParam("boardNo") long boardNo) {
+		
+		model.addAttribute("board", service.get(boardNo));
+		model.addAttribute("video", service.getClipViewVideo(boardNo));
+		
+		return "/section/clip/clip_modify";
+		
+	}
+	
+	@PostMapping("/clip_modify")
+	public String clipModify(BoardVO boardVO, @RequestParam("youtubeLink") String youtubeLink, @RequestParam("sectionNo") int sectionNo) {
+		
+		long fileNo = service.getFileNo2(boardVO);
+		
+		service.clipModify(boardVO, youtubeLink, sectionNo, fileNo);
+		
+		return "redirect:/clip";
+	}
+	
+	@GetMapping("clip_remove")
+	public String clipRemove(@RequestParam("boardNo") long boardNo) {
+		
+		service.vrRemove(boardNo);
+		
+		return "redirect:/vr";
+	}
+	
 }

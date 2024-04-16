@@ -25,6 +25,9 @@ public class File {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
+	@Column(nullable=false)
+	private int id2;
+	
 	@Column(length=255, nullable=false)
 	private String fileName;
 	
